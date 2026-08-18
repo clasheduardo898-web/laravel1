@@ -21,7 +21,7 @@ const largosDisponibles = reactive({ items: [] });
 
 async function cargarLargos() {
     if (!filtros.tipo_papel_id) { largosDisponibles.items = []; return; }
-    const { data } = await axios.get(`/api/tipos-papel/${filtros.tipo_papel_id}/largos`);
+    const { data } = await axios.get(`/tipos-papel/${filtros.tipo_papel_id}/largos-json`);
     largosDisponibles.items = data;
 }
 

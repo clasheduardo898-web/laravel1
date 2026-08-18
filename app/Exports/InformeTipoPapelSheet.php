@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Corte;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -39,7 +40,7 @@ class InformeTipoPapelSheet implements FromCollection, WithHeadings, WithTitle
         return $query->get();
     }
 
-    public function collection()
+    public function collection():Enumerable
     {
         return $this->cortesFiltrados()
             ->groupBy(fn($c) => $c->tipo_papel . '|' . $c->rollo_largo_mm)

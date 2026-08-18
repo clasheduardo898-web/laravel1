@@ -8,7 +8,6 @@ export default defineConfig({
     resolve: {
     alias: { '@': path.resolve(__dirname, 'resources/js') },
     },
-    server: { host: '127.0.0.1', port: 5173 },
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
@@ -24,5 +23,10 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
-    
+    server: {
+        host: true,
+        hmr: {
+            host: '192.168.1.182', //REMPLAZAR AQUI CON EL IP LOCAL
+        },
+    },
 });

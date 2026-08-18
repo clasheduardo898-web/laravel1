@@ -43,7 +43,7 @@ if (props.corteEnEdicion?.tipo_papel_id) {
 
 async function cargarLargos(tipoPapelId) {
     if (!tipoPapelId) { largosDisponibles.items = []; return; }
-    const { data } = await axios.get(`/api/tipos-papel/${tipoPapelId}/largos`);
+    const { data } = await axios.get(`/tipos-papel/${tipoPapelId}/largos-json`);
     largosDisponibles.items = data;
 }
 
@@ -141,11 +141,11 @@ const diferenciaPesoKg = () => {
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
                     <label class="text-sm text-slate-600">Peso del rollo master (kg)</label>
-                    <input type="number" step="0.01" v-model="form.rollo_peso" class="w-full rounded border-slate-300 text-sm" />
+                    <input type="number" step="0.01" v-model="form.rollo_peso" class="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
                 </div>
                 <div>
                     <label class="text-sm text-slate-600">Merma / desperdicio (kg)</label>
-                    <input type="number" step="0.01" v-model="form.merma_kg" class="w-full rounded border-slate-300 text-sm" />
+                    <input type="number" step="0.01" v-model="form.merma_kg" class="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
                 </div>
             </div>
 

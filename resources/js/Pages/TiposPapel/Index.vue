@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm, router } from '@inertiajs/vue3';
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 
 const props = defineProps({ tiposPapel: Array });
 
@@ -11,7 +11,18 @@ function crearTipo() {
 }
 
 const nuevoLargo = reactive({});
-props.tiposPapel.forEach((tp) => { nuevoLargo[tp.id] = { valor: '', unidad_medida: 'mm' }; });
+
+   watch(
+       () => props.tiposPapel,
+       (tipos) => {
+           tipos.forEach((tp) => {
+               if (!nuevoLargo[tp.id]) {
+                   nuevoLargo[tp.id] = { valor: '', unidad_medida: 'mm' };
+               }
+           });
+       },
+       { immediate: true, deep: true }
+   );
 
 function agregarLargo(tipoPapelId) {
     router.post(`/tipos-papel/${tipoPapelId}/largos`, nuevoLargo[tipoPapelId], {

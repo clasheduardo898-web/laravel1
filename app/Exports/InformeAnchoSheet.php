@@ -6,6 +6,7 @@ use App\Models\Corte;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Illuminate\Support\Enumerable;
 
 class InformeAnchoSheet implements FromCollection, WithHeadings, WithTitle
 {
@@ -39,7 +40,7 @@ class InformeAnchoSheet implements FromCollection, WithHeadings, WithTitle
         return $query->get();
     }
 
-    public function collection()
+    public function collection():Enumerable
     {
         $rollos = $this->cortesFiltrados()->flatMap->numerosCorte->flatMap->rollosCortados;
 

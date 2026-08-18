@@ -13,7 +13,7 @@ class Corte extends Model
         'estado', 'creado_por', 'verificado_por', 'verificado_en',
     ];
 
-    protected $casts = ['verificado_en' => 'datetime'];
+    protected $casts = ['verificado_en' => 'datetime', 'fecha' => 'date'];
 
     public function numerosCorte() { return $this->hasMany(NumeroCorte::class); }
     public function creador() { return $this->belongsTo(User::class, 'creado_por'); }

@@ -56,4 +56,10 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+   Route::get('/tipos-papel/{tipoPapel}/largos-json', function (\App\Models\TipoPapel $tipoPapel) {
+       return \App\Models\LargoMaster::where('tipo_papel_id', $tipoPapel->id)
+           ->where('activo', true)
+           ->get(['id', 'valor_original', 'unidad_medida', 'largo_mm']);
+   })->middleware('auth');
+
 Route::get('/', fn () => redirect('/cortes'));

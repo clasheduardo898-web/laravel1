@@ -1,4 +1,3 @@
-// app/Http/Requests/GuardarCorteRequest.php
 <?php
 
 namespace App\Http\Requests;

@@ -6,6 +6,7 @@ use App\Models\Corte;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Illuminate\Support\Enumerable;
 
 class CortesExport implements FromCollection, WithHeadings, WithMapping
 {
@@ -16,7 +17,7 @@ class CortesExport implements FromCollection, WithHeadings, WithMapping
         $this->ids = $ids;
     }
 
-    public function collection()
+    public function collection():Enumerable
     {
         $query = Corte::with('numerosCorte.rollosCortados')->latest();
 
