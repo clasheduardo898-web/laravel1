@@ -64,6 +64,7 @@ function pesoNetoTotal(corte) {
                         </span>
                     </div>
                     <div class="flex gap-2 flex-wrap text-sm">
+                        <a :href="`/cortes/${corte.id}/imprimir`" target="_blank" class="rounded bg-emerald-600 text-white px-2 py-1">Imprimir PDF</a>
                         <Link v-if="puedeEditar" :href="`/cortes?editar=${corte.id}`" class="rounded bg-amber-500 text-white px-2 py-1">Modificar</Link>
                         <button v-if="!corte.verificado_por" @click="verificar(corte.id)" class="rounded bg-sky-500 text-white px-2 py-1">Verificar</button>
                         <button v-else-if="esAdmin" @click="revertir(corte.id)" class="rounded border px-2 py-1">Revertir verificación</button>

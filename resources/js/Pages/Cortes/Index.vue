@@ -232,6 +232,7 @@ const diferenciaPesoKg = () => {
             <div v-for="b in borradores" :key="b.id" class="flex justify-between items-center text-sm border-b py-2">
                 <span>{{ b.fecha }} — {{ b.operario }} — {{ b.tipo_papel }}</span>
                 <div class="flex gap-2">
+                    <a :href="`/cortes/${b.id}/imprimir`" target="_blank" class="text-emerald-600 hover:underline">Imprimir PDF</a>
                     <Link :href="`/cortes?editar=${b.id}`" class="text-indigo-600 hover:underline">Continuar</Link>
                     <button @click="eliminarBorrador(b.id)" class="text-red-600 hover:underline">Eliminar</button>
                 </div>

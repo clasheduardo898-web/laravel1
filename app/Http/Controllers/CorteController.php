@@ -10,6 +10,7 @@ use App\Http\Requests\GuardarCorteRequest;
 use App\Services\CalculadoraCorte;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CorteController extends Controller
 {
@@ -143,5 +144,14 @@ class CorteController extends Controller
         $corte->delete();
         session()->flash('message', 'Borrador eliminado.');
         return back();
+    }
+
+    public function imprimir(Corte $corte)
+    {
+        $corte->load('numerosCorte.rollosCortados');
+
+        $pdf = Pdf::loadView('pdf.corte', ['corte' => $corte])->setPaper('a4', 'landscape');
+
+        return $pdf->stream("corte-{$corte->id}.pdf");
     }
 }

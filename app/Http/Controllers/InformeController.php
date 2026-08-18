@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exports\InformesExport;
 use App\Models\Corte;
-use App\Models\LargoMaster;
-use App\Models\Operario;
 use App\Models\TipoPapel;
+use App\Models\Operario;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -31,9 +31,8 @@ class InformeController extends Controller
         return $query->get();
     }
 
-    public function index(Request $request)
+    private function calcularResumen(array $filtros): array
     {
-        $filtros = $this->filtros($request);
         $cortes = $this->cortesFiltrados($filtros);
 
         $resumenTipo = $cortes->groupBy(fn ($c) => $c->tipo_papel . '|' . $c->rollo_largo_mm)
@@ -58,25 +57,55 @@ class InformeController extends Controller
                 'peso_neto_kg' => round($grupo->sum('peso_kg'), 3),
             ])->sortBy('ancho_mm')->values();
 
+        $totales = [
+            'masters' => $cortes->count(),
+            'pesoMasterKg' => round($cortes->sum('rollo_peso_kg'), 3),
+            'mermaKg' => round($cortes->sum('merma_kg'), 3),
+            'rollos' => $todosRollos->count(),
+            'netoLb' => round($todosRollos->sum('peso_neto_lb'), 3),
+            'netoKg' => round($todosRollos->sum('peso_kg'), 3),
+        ];
+
+        return compact('resumenTipo', 'resumenAncho', 'totales');
+    }
+
+    public function index(Request $request)
+    {
+        $filtros = $this->filtros($request);
+        $resumen = $this->calcularResumen($filtros);
+
         return Inertia::render('Informes/Index', [
             'filtros' => $filtros,
             'tiposPapel' => TipoPapel::orderBy('nombre')->get(),
             'operariosDisponibles' => Operario::orderBy('nombre')->get(),
-            'resumenTipo' => $resumenTipo,
-            'resumenAncho' => $resumenAncho,
-            'totales' => [
-                'masters' => $cortes->count(),
-                'pesoMasterKg' => round($cortes->sum('rollo_peso_kg'), 3),
-                'mermaKg' => round($cortes->sum('merma_kg'), 3),
-                'rollos' => $todosRollos->count(),
-                'netoLb' => round($todosRollos->sum('peso_neto_lb'), 3),
-                'netoKg' => round($todosRollos->sum('peso_kg'), 3),
-            ],
+            'resumenTipo' => $resumen['resumenTipo'],
+            'resumenAncho' => $resumen['resumenAncho'],
+            'totales' => $resumen['totales'],
         ]);
     }
 
     public function exportar(Request $request)
     {
         return Excel::download(new InformesExport($this->filtros($request)), 'informes_cortes.xlsx');
+    }
+
+    public function exportarPdf(Request $request)
+    {
+        $filtros = $this->filtros($request);
+        $resumen = $this->calcularResumen($filtros);
+
+        $tipoPapelNombre = !empty($filtros['tipo_papel_id'])
+            ? TipoPapel::find($filtros['tipo_papel_id'])?->nombre
+            : null;
+
+        $pdf = Pdf::loadView('pdf.informes', [
+            'filtros' => $filtros,
+            'tipoPapelNombre' => $tipoPapelNombre,
+            'resumenTipo' => $resumen['resumenTipo'],
+            'resumenAncho' => $resumen['resumenAncho'],
+            'totales' => $resumen['totales'],
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('informe_cortes.pdf');
     }
 }

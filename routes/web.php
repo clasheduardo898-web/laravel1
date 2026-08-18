@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('permission:informes.ver')->group(function () {
         Route::get('/informes', [InformeController::class, 'index']);
         Route::get('/informes/exportar', [InformeController::class, 'exportar']);
+        Route::get('/informes/pdf', [InformeController::class, 'exportarPdf']);
     });
 
     Route::middleware('permission:catalogos.gestionar')->group(function () {
@@ -54,7 +55,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/usuarios/{user}', [UserController::class, 'update']);
         Route::delete('/usuarios/{user}', [UserController::class, 'destroy']);
     });
-});
+
+    Route::get('/cortes/{corte}/imprimir', [CorteController::class, 'imprimir'])
+    ->middleware('permission:cortes.crear|cortes.ver-propios|cortes.ver-todos|historial.ver');
+    });
+
 
    Route::get('/tipos-papel/{tipoPapel}/largos-json', function (\App\Models\TipoPapel $tipoPapel) {
        return \App\Models\LargoMaster::where('tipo_papel_id', $tipoPapel->id)

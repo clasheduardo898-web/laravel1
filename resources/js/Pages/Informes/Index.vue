@@ -43,6 +43,12 @@ function exportar() {
     const params = new URLSearchParams(filtros).toString();
     window.location.href = `/informes/exportar?${params}`;
 }
+
+function exportarPdf() {
+    const params = new URLSearchParams(filtros).toString();
+    window.location.href = `/informes/pdf?${params}`;
+}
+
 </script>
 
 <template>
@@ -78,6 +84,7 @@ function exportar() {
             <div class="flex gap-2">
                 <button @click="limpiarFiltros" class="rounded border px-3 py-1.5 text-sm hover:bg-slate-100">Limpiar filtros</button>
                 <button @click="exportar" class="rounded bg-green-600 text-white px-3 py-1.5 text-sm">Exportar a Excel</button>
+                <button @click="exportarPdf" class="rounded bg-red-600 text-white px-3 py-1.5 text-sm">Exportar a PDF</button>
             </div>
         </div>
 

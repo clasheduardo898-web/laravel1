@@ -2,22 +2,20 @@
 
 namespace App\Exports;
 
+use Maatwebsite\Excel\Concerns\Export;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class InformesExport implements WithMultipleSheets
+class InformesExport implements Export, WithMultipleSheets
 {
-    protected $filtros;
-
-    public function __construct(array $filtros)
+    public function __construct(protected array $filtros = [])
     {
-        $this->filtros = $filtros;
     }
 
     public function sheets(): array
     {
         return [
-            new InformeTipoPapelSheet($this->filtros),
-            new InformeAnchoSheet($this->filtros),
+            'Por tipo de papel' => new InformeTipoPapelSheet($this->filtros),
+            'Por ancho' => new InformeAnchoSheet($this->filtros),
         ];
     }
 }
