@@ -1,4 +1,4 @@
-const LIBRAS_POR_KG = 2.2046;
+export const LIBRAS_POR_KG = 2.2046;
 const MM_POR_PULGADA = 25.4;
 export const MAX_ROLLOS_POR_CORTE = 30;
 
@@ -37,7 +37,10 @@ export function totalPesoNetoKg(numerosCorte) {
     let total = 0;
     for (const nc of numerosCorte) {
         for (const r of nc.rollos) {
-            total += pesoKg(pesoNetoLb(nc, r.peso_lb, r.ancho));
+            const neto = nc.core_individual
+                ? pesoNetoLbRolloIndividual(r.peso_lb, r.core_lb)
+                : pesoNetoLb(nc, r.peso_lb, r.ancho);
+            total += pesoKg(neto);
         }
     }
     return Math.round(total * 1000) / 1000;
@@ -47,7 +50,12 @@ export function nuevoNumeroCorte(indiceActual) {
     return {
         numero: String(indiceActual + 1),
         core_lb: '',
+        core_individual: false,
         unidad_ancho: 'mm',
-        rollos: [{ ancho: '', peso_lb: '' }],
+        rollos: [{ ancho: '', peso_lb: '', core_lb: '' }],
     };
+}
+
+export function pesoNetoLbRolloIndividual(pesoBruto, coreRollo) {
+    return Math.max(0, (parseFloat(pesoBruto) || 0) - (parseFloat(coreRollo) || 0));
 }

@@ -44,6 +44,29 @@ function alternarLargo(id) { router.post(`/largos-master/${id}/alternar`); }
 function eliminarLargo(id) {
     if (confirm('¿Eliminar este largo?')) router.delete(`/largos-master/${id}`);
 }
+
+const editandoTipo = reactive({ id: null, nombre: '' });
+function editarTipo(tp) {
+    editandoTipo.id = tp.id;
+    editandoTipo.nombre = tp.nombre;
+}
+function actualizarTipo() {
+    router.put(`/tipos-papel/${editandoTipo.id}`, { nombre: editandoTipo.nombre }, {
+        onSuccess: () => { editandoTipo.id = null; },
+    });
+}
+function cancelarTipo() {
+    editandoTipo.id = null;
+}
+function alternarTipo(id) {
+    router.post(`/tipos-papel/${id}/alternar`);
+}
+function eliminarTipo(id) {
+    if (confirm('¿Eliminar este tipo de papel? También se eliminarán sus largos asociados.')) {
+        router.delete(`/tipos-papel/${id}`);
+    }
+}
+
 </script>
 
 <template>
@@ -59,7 +82,26 @@ function eliminarLargo(id) {
         </div>
 
         <div v-for="tp in tiposPapel" :key="tp.id" class="bg-white rounded-lg shadow mb-4">
-            <div class="p-3 border-b font-semibold text-sm">{{ tp.nombre }}</div>
+            <div class="p-3 border-b flex justify-between items-center flex-wrap gap-2">
+                <template v-if="editandoTipo.id === tp.id">
+                    <div class="flex gap-2 items-center flex-wrap">
+                        <input v-model="editandoTipo.nombre" class="rounded border border-slate-300 text-sm px-2 py-1" />
+                        <button @click="actualizarTipo" class="rounded bg-indigo-600 text-white px-2 py-1 text-xs">Guardar</button>
+                        <button @click="cancelarTipo" class="rounded border px-2 py-1 text-xs">Cancelar</button>
+                    </div>
+                </template>
+                <template v-else>
+                    <span class="font-semibold text-sm">
+                        {{ tp.nombre }}
+                        <span v-if="!tp.activo" class="text-xs text-slate-400 font-normal">(inactivo)</span>
+                    </span>
+                    <div class="flex gap-1 flex-wrap">
+                        <button @click="alternarTipo(tp.id)" class="text-xs rounded border px-2 py-1">{{ tp.activo ? 'Desactivar' : 'Activar' }}</button>
+                        <button @click="editarTipo(tp)" class="text-xs rounded bg-amber-500 text-white px-2 py-1">Editar</button>
+                        <button @click="eliminarTipo(tp.id)" class="text-xs rounded bg-red-600 text-white px-2 py-1">Eliminar</button>
+                    </div>
+                </template>
+            </div>
             <div class="p-3">
                 <table class="w-full text-xs border mb-2">
                     <thead class="bg-slate-100"><tr><th class="p-1 border">Valor ingresado</th><th class="p-1 border">Equivalente (mm)</th><th class="p-1 border">Estado</th><th class="p-1 border">Acción</th></tr></thead>

@@ -75,4 +75,25 @@ class TipoPapelController extends Controller
         session()->flash('message', 'Largo eliminado.');
         return back();
     }
+
+    public function update(Request $request, TipoPapel $tipoPapel)
+{
+    $data = $request->validate(['nombre' => 'required|min:2']);
+    $tipoPapel->update($data);
+    session()->flash('message', 'Tipo de papel actualizado.');
+    return back();
+}
+
+public function alternar(TipoPapel $tipoPapel)
+{
+    $tipoPapel->update(['activo' => !$tipoPapel->activo]);
+    return back();
+}
+
+public function destroy(TipoPapel $tipoPapel)
+{
+    $tipoPapel->delete();
+    session()->flash('message', 'Tipo de papel eliminado.');
+    return back();
+}
 }

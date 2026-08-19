@@ -28,6 +28,9 @@ class GuardarCorteRequest extends FormRequest
             'numeros_corte.*.rollos' => 'required|array|min:1|max:' . CalculadoraCorte::MAX_ROLLOS_POR_CORTE,
             'numeros_corte.*.rollos.*.ancho' => 'required|numeric|min:1',
             'numeros_corte.*.rollos.*.peso_lb' => 'required|numeric|min:0.001',
+            'numeros_corte.*.core_individual' => 'boolean',
+            'numeros_corte.*.rollos.*.core_lb' => 'nullable|numeric|min:0',
+            'numeros_corte.*.id' => 'nullable|integer',
         ];
     }
 }

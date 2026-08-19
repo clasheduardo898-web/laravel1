@@ -19,7 +19,7 @@
         padding: 4px;
     }
 
-    .bloque-header { font-size: 9px; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 4px; }
+    .bloque-header { font-size: 9px; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 4px; min-height: 30px; }
     .bloque-header strong { font-size: 10px; }
 
     table.rollos { width: 100%; border-collapse: collapse; font-size: 8px; }
@@ -70,15 +70,18 @@
                 @foreach ($grupo as $nc)
                     <td>
                         <div class="bloque-header">
-                            N&deg; de corte: <strong>{{ $nc->numero }}</strong><br>
+                            N&deg; de corte: <strong>{{ $nc->numero }}</strong> &nbsp;|&nbsp;
                             Core total: {{ $nc->core_lb }} lb &nbsp;|&nbsp;
                             Unidad: {{ $nc->unidad_ancho === 'pulgada' ? 'pulgadas' : 'mm' }}
+                            @if ($nc->verificado_por)
+                                &nbsp;|&nbsp;<span style="color:#0369a1;">&#10003; Verificado por: {{ $nc->verificador->name }}</span>
+                            @endif
                         </div>
                         <table class="rollos">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Medida<br>rollo (mm)</th>
+                                    <th>Medida<br>rollo ({{ $nc->unidad_ancho === 'pulgada' ? 'pulg' : 'mm' }})</th>
                                     <th>PB<br>rollo (lb)</th>
                                     <th>Core</th>
                                     <th>PN<br>rollo (lb)</th>

@@ -69,6 +69,7 @@
                 <th>Largo (mm)</th>
                 <th>Cantidad</th>
                 <th>Peso total (kg)</th>
+                <th>Peso neto cortado (kg)</th>
                 <th>Merma (kg)</th>
             </tr>
         </thead>
@@ -79,18 +80,20 @@
                     <td>{{ $fila['largo_mm'] }}</td>
                     <td>{{ $fila['cantidad'] }}</td>
                     <td>{{ $fila['peso_total_kg'] }}</td>
+                    <td>{{ $fila['peso_neto_kg'] }}</td>
                     <td>{{ $fila['merma_total_kg'] }}</td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="vacio">Sin datos para los filtros seleccionados.</td></tr>
+                <tr><td colspan="6" class="vacio">Sin datos para los filtros seleccionados.</td></tr>
             @endforelse
         </tbody>
     </table>
 
-    <h2>Totales por ancho de rollo cortado</h2>
+    <h2>Totales por tipo de papel y ancho de rollo cortado</h2>
     <table class="datos">
         <thead>
             <tr>
+                <th>Tipo de papel</th>
                 <th>Ancho (mm)</th>
                 <th>Cantidad</th>
                 <th>Neto (lb)</th>
@@ -100,13 +103,14 @@
         <tbody>
             @forelse ($resumenAncho as $fila)
                 <tr>
+                    <td>{{ $fila['tipo_papel'] }}</td>
                     <td>{{ $fila['ancho_mm'] }}</td>
                     <td>{{ $fila['cantidad'] }}</td>
                     <td>{{ $fila['peso_neto_lb'] }}</td>
                     <td>{{ $fila['peso_neto_kg'] }}</td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="vacio">Sin datos para los filtros seleccionados.</td></tr>
+                <tr><td colspan="5" class="vacio">Sin datos para los filtros seleccionados.</td></tr>
             @endforelse
         </tbody>
     </table>

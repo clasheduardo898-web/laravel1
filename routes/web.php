@@ -14,17 +14,26 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
-    Route::middleware('permission:cortes.crear|cortes.ver-propios|cortes.ver-todos')->group(function () {
+    Route::middleware('permission:cortes.crear|cortes.ver-propios|cortes.ver-todos|cortes.verificar')->group(function () {
         Route::get('/cortes', [CorteController::class, 'index']);
+    });
+
+    Route::middleware('permission:cortes.crear')->group(function () {
         Route::post('/cortes', [CorteController::class, 'store']);
         Route::put('/cortes/{corte}', [CorteController::class, 'update']);
         Route::delete('/cortes/{corte}', [CorteController::class, 'destroyBorrador']);
     });
 
+    Route::middleware('permission:cortes.verificar')->group(function () {
+        Route::post('/numeros-corte/{numeroCorte}/verificar', [CorteController::class, 'verificarNumeroCorte']);
+    });
+
+    Route::middleware('permission:cortes.revertir-verificacion')->group(function () {
+        Route::post('/numeros-corte/{numeroCorte}/revertir', [CorteController::class, 'revertirNumeroCorte']);
+    });
+
     Route::middleware('permission:historial.ver')->group(function () {
         Route::get('/historial', [HistorialController::class, 'index']);
-        Route::post('/historial/{corte}/verificar', [HistorialController::class, 'verificar']);
-        Route::post('/historial/{corte}/revertir', [HistorialController::class, 'revertirVerificacion']);
         Route::delete('/historial/{corte}', [HistorialController::class, 'destroy']);
         Route::get('/historial/exportar', [HistorialController::class, 'exportar']);
     });
@@ -44,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/tipos-papel', [TipoPapelController::class, 'index']);
         Route::post('/tipos-papel', [TipoPapelController::class, 'store']);
         Route::post('/tipos-papel/{tipoPapel}/largos', [TipoPapelController::class, 'agregarLargo']);
+        Route::put('/tipos-papel/{tipoPapel}', [TipoPapelController::class, 'update']);
+        Route::post('/tipos-papel/{tipoPapel}/alternar', [TipoPapelController::class, 'alternar']);
+        Route::delete('/tipos-papel/{tipoPapel}', [TipoPapelController::class, 'destroy']);
         Route::put('/largos-master/{largo}', [TipoPapelController::class, 'actualizarLargo']);
         Route::post('/largos-master/{largo}/alternar', [TipoPapelController::class, 'alternarLargo']);
         Route::delete('/largos-master/{largo}', [TipoPapelController::class, 'eliminarLargo']);

@@ -16,7 +16,7 @@ class UserController extends Controller
             'usuarios' => User::with('roles:id,name')->orderBy('name')->get()
                 ->map(fn ($u) => [
                     'id' => $u->id, 'name' => $u->name, 'email' => $u->email,
-                    'role' => $u->roles->first()?->name,
+                    'roles' => $u->roles->pluck('name'),
                 ]),
             'roles' => Role::pluck('name'),
         ]);
@@ -28,13 +28,14 @@ class UserController extends Controller
             'name' => 'required|min:2',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'role' => 'required|exists:roles,name',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,name',
         ]);
 
         $user = User::create([
             'name' => $data['name'], 'email' => $data['email'], 'password' => bcrypt($data['password']),
         ]);
-        $user->assignRole($data['role']);
+        $user->assignRole($data['roles']);
 
         session()->flash('message', 'Usuario creado.');
         return back();
@@ -46,7 +47,8 @@ class UserController extends Controller
             'name' => 'required|min:2',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => 'nullable|min:6',
-            'role' => 'required|exists:roles,name',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,name',
         ]);
 
         $user->name = $data['name'];
@@ -55,7 +57,7 @@ class UserController extends Controller
             $user->password = bcrypt($data['password']);
         }
         $user->save();
-        $user->syncRoles([$data['role']]);
+        $user->syncRoles($data['roles']);
 
         session()->flash('message', 'Usuario actualizado.');
         return back();

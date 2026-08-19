@@ -52,9 +52,6 @@ function pesoNetoTotal(corte) {
 
         <div v-for="corte in cortes.data" :key="corte.id" class="bg-white rounded-lg shadow mb-3">
             <div class="p-3 border-b">
-                <div v-if="corte.verificado_por" class="text-xs bg-sky-50 text-sky-700 rounded px-2 py-1 mb-2">
-                    ✔ Verificado por <strong>{{ corte.verificador?.name }}</strong> el {{ corte.verificado_en }}
-                </div>
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
                     <div class="flex items-center gap-2 text-sm">
                         <input type="checkbox" :value="corte.id" v-model="seleccionados" />
@@ -66,8 +63,6 @@ function pesoNetoTotal(corte) {
                     <div class="flex gap-2 flex-wrap text-sm">
                         <a :href="`/cortes/${corte.id}/imprimir`" target="_blank" class="rounded bg-emerald-600 text-white px-2 py-1">Imprimir PDF</a>
                         <Link v-if="puedeEditar" :href="`/cortes?editar=${corte.id}`" class="rounded bg-amber-500 text-white px-2 py-1">Modificar</Link>
-                        <button v-if="!corte.verificado_por" @click="verificar(corte.id)" class="rounded bg-sky-500 text-white px-2 py-1">Verificar</button>
-                        <button v-else-if="esAdmin" @click="revertir(corte.id)" class="rounded border px-2 py-1">Revertir verificación</button>
                         <button v-if="puedeEliminar" @click="eliminar(corte.id)" class="rounded bg-red-600 text-white px-2 py-1">Eliminar</button>
                     </div>
                 </div>
@@ -75,6 +70,9 @@ function pesoNetoTotal(corte) {
             <div class="p-3">
                 <div v-for="nc in corte.numeros_corte" :key="nc.id" class="mb-3">
                     <h3 class="text-sm font-semibold mb-1">
+                        <div v-if="nc.verificado_por" class="text-xs bg-sky-50 text-sky-700 rounded px-2 py-1 mb-1 inline-block">
+                            ✔ Verificado por {{ nc.verificador?.name }}
+                        </div>
                         Número de corte: {{ nc.numero }}
                         (core: {{ nc.core_lb }} lb, unidad: {{ nc.unidad_ancho === 'pulgada' ? 'pulgadas' : 'mm' }})
                     </h3>

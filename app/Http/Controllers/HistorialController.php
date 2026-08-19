@@ -15,7 +15,7 @@ class HistorialController extends Controller
         $user = $request->user();
 
         return Inertia::render('Historial/Index', [
-            'cortes' => Corte::with('numerosCorte.rollosCortados', 'verificador')
+            'cortes' => Corte::with('numerosCorte.rollosCortados', 'numerosCorte.verificador')
                 ->where('estado', 'finalizado')
                 ->latest()
                 ->paginate(5)
@@ -26,22 +26,7 @@ class HistorialController extends Controller
         ]);
     }
 
-    public function verificar(Request $request, Corte $corte)
-    {
-        $corte->update(['verificado_por' => $request->user()->id, 'verificado_en' => now()]);
-        session()->flash('message', 'Corte verificado.');
-        return back();
-    }
-
-    public function revertirVerificacion(Request $request, Corte $corte)
-    {
-        abort_unless($request->user()->hasRole('admin'), 403);
-        $corte->update(['verificado_por' => null, 'verificado_en' => null]);
-        session()->flash('message', 'Verificación revertida.');
-        return back();
-    }
-
-    public function destroy(Request $request, Corte $corte)
+        public function destroy(Request $request, Corte $corte)
     {
         abort_unless($request->user()->hasRole('admin'), 403);
         $corte->delete();

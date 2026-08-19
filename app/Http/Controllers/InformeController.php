@@ -38,24 +38,48 @@ class InformeController extends Controller
         $resumenTipo = $cortes->groupBy(fn ($c) => $c->tipo_papel . '|' . $c->rollo_largo_mm)
             ->map(function ($grupo) {
                 $primero = $grupo->first();
+                $netoKg = $grupo->flatMap->numerosCorte->flatMap->rollosCortados->sum('peso_kg');
+
                 return [
                     'tipo_papel' => $primero->tipo_papel,
                     'largo_mm' => $primero->rollo_largo_mm,
                     'cantidad' => $grupo->count(),
                     'peso_total_kg' => round($grupo->sum('rollo_peso_kg'), 3),
+                    'peso_neto_kg' => round($netoKg, 3),
                     'merma_total_kg' => round($grupo->sum('merma_kg'), 3),
                 ];
             })->values();
 
-        $todosRollos = $cortes->flatMap->numerosCorte->flatMap->rollosCortados;
+        $filasAncho = collect();
+        foreach ($cortes as $corte) {
+            foreach ($corte->numerosCorte as $nc) {
+                foreach ($nc->rollosCortados as $rc) {
+                    $filasAncho->push([
+                        'tipo_papel' => $corte->tipo_papel,
+                        'ancho_mm' => (float) $rc->ancho_mm,
+                        'peso_neto_lb' => $rc->peso_neto_lb,
+                        'peso_kg' => $rc->peso_kg,
+                    ]);
+                }
+            }
+        }
 
-        $resumenAncho = $todosRollos->groupBy('ancho_mm')
-            ->map(fn ($grupo, $ancho) => [
-                'ancho_mm' => (float) $ancho,
-                'cantidad' => $grupo->count(),
-                'peso_neto_lb' => round($grupo->sum('peso_neto_lb'), 3),
-                'peso_neto_kg' => round($grupo->sum('peso_kg'), 3),
-            ])->sortBy('ancho_mm')->values();
+        $resumenAncho = $filasAncho
+            ->groupBy(fn ($f) => $f['tipo_papel'] . '|' . $f['ancho_mm'])
+            ->map(function ($grupo) {
+                $primero = $grupo->first();
+                return [
+                    'tipo_papel' => $primero['tipo_papel'],
+                    'ancho_mm' => $primero['ancho_mm'],
+                    'cantidad' => $grupo->count(),
+                    'peso_neto_lb' => round($grupo->sum('peso_neto_lb'), 3),
+                    'peso_neto_kg' => round($grupo->sum('peso_kg'), 3),
+                ];
+            })
+            ->sortBy(fn ($f) => $f['tipo_papel'] . '|' . str_pad($f['ancho_mm'], 10, '0', STR_PAD_LEFT))
+            ->values();
+
+        $todosRollos = $cortes->flatMap->numerosCorte->flatMap->rollosCortados;
 
         $totales = [
             'masters' => $cortes->count(),

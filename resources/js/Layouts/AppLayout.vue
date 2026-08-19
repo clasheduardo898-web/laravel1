@@ -35,7 +35,7 @@ const cerrarSesion = () => router.post('/logout');
                         <Link v-if="puede('usuarios.gestionar')" href="/usuarios"
                             class="text-sm text-slate-600 hover:text-indigo-600">Usuarios</Link>
 
-                        <span class="text-xs text-slate-400">{{ user.name }} ({{ user.roles?.[0] }})</span>
+                        <span class="text-xs text-slate-400">{{ user.name }} ({{ user.roles?.join(', ') }})</span>
                         <button @click="cerrarSesion" class="text-sm text-red-600 hover:underline">Salir</button>
                     </div>
                 </div>

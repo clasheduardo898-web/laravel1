@@ -103,28 +103,32 @@ function exportarPdf() {
         <table class="w-full text-xs border mb-6 bg-white">
             <thead class="bg-slate-100"><tr>
                 <th class="p-1 border">Tipo de papel</th><th class="p-1 border">Largo (mm)</th>
-                <th class="p-1 border">Cantidad</th><th class="p-1 border">Peso total (kg)</th><th class="p-1 border">Merma (kg)</th>
+                <th class="p-1 border">Cantidad</th><th class="p-1 border">Peso total (kg)</th>
+                <th class="p-1 border">Peso neto cortado (kg)</th><th class="p-1 border">Merma (kg)</th>
             </tr></thead>
             <tbody>
                 <tr v-for="(f, i) in resumenTipo" :key="i">
                     <td class="p-1 border">{{ f.tipo_papel }}</td><td class="p-1 border">{{ f.largo_mm }}</td>
-                    <td class="p-1 border">{{ f.cantidad }}</td><td class="p-1 border">{{ f.peso_total_kg }}</td><td class="p-1 border">{{ f.merma_total_kg }}</td>
+                    <td class="p-1 border">{{ f.cantidad }}</td><td class="p-1 border">{{ f.peso_total_kg }}</td>
+                    <td class="p-1 border">{{ f.peso_neto_kg }}</td><td class="p-1 border">{{ f.merma_total_kg }}</td>
                 </tr>
-                <tr v-if="!resumenTipo.length"><td colspan="5" class="p-2 text-center text-slate-400">Sin datos para los filtros seleccionados.</td></tr>
+                <tr v-if="!resumenTipo.length"><td colspan="6" class="p-2 text-center text-slate-400">Sin datos para los filtros seleccionados.</td></tr>
             </tbody>
         </table>
 
-        <h2 class="text-sm font-semibold mb-2">Totales por ancho de rollo cortado</h2>
+        <h2 class="text-sm font-semibold mb-2">Totales por tipo de papel y ancho de rollo cortado</h2>
         <table class="w-full text-xs border bg-white">
             <thead class="bg-slate-100"><tr>
-                <th class="p-1 border">Ancho (mm)</th><th class="p-1 border">Cantidad</th><th class="p-1 border">Neto (lb)</th><th class="p-1 border">Neto (kg)</th>
+                <th class="p-1 border">Tipo de papel</th><th class="p-1 border">Ancho (mm)</th>
+                <th class="p-1 border">Cantidad</th><th class="p-1 border">Neto (lb)</th><th class="p-1 border">Neto (kg)</th>
             </tr></thead>
             <tbody>
                 <tr v-for="(f, i) in resumenAncho" :key="i">
-                    <td class="p-1 border">{{ f.ancho_mm }}</td><td class="p-1 border">{{ f.cantidad }}</td>
+                    <td class="p-1 border">{{ f.tipo_papel }}</td><td class="p-1 border">{{ f.ancho_mm }}</td>
+                    <td class="p-1 border">{{ f.cantidad }}</td>
                     <td class="p-1 border">{{ f.peso_neto_lb }}</td><td class="p-1 border">{{ f.peso_neto_kg }}</td>
                 </tr>
-                <tr v-if="!resumenAncho.length"><td colspan="4" class="p-2 text-center text-slate-400">Sin datos para los filtros seleccionados.</td></tr>
+                <tr v-if="!resumenAncho.length"><td colspan="5" class="p-2 text-center text-slate-400">Sin datos para los filtros seleccionados.</td></tr>
             </tbody>
         </table>
     </AppLayout>

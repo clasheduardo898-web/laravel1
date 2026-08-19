@@ -16,7 +16,7 @@ class InformeTipoPapelSheet implements FromCollection, WithHeadings, WithTitle
 
     private function cortesFiltrados()
     {
-        $query = Corte::where('estado', 'finalizado');
+        $query = Corte::with('numerosCorte.rollosCortados','estado', 'finalizado');
 
         if (!empty($this->filtros['fecha_desde'])) $query->whereDate('fecha', '>=', $this->filtros['fecha_desde']);
         if (!empty($this->filtros['fecha_hasta'])) $query->whereDate('fecha', '<=', $this->filtros['fecha_hasta']);
@@ -33,11 +33,14 @@ class InformeTipoPapelSheet implements FromCollection, WithHeadings, WithTitle
             ->groupBy(fn ($c) => $c->tipo_papel . '|' . $c->rollo_largo_mm)
             ->map(function ($grupo) {
                 $primero = $grupo->first();
+                $netoKg = $grupo->flatMap->numerosCorte->flatMap->rollosCortados->sum('peso_kg');
+
                 return [
                     $primero->tipo_papel,
                     $primero->rollo_largo_mm,
                     $grupo->count(),
                     round($grupo->sum('rollo_peso_kg'), 3),
+                    round($netoKg, 3),
                     round($grupo->sum('merma_kg'), 3),
                 ];
             })->values();
@@ -45,7 +48,7 @@ class InformeTipoPapelSheet implements FromCollection, WithHeadings, WithTitle
 
     public function headings(): array
     {
-        return ['Tipo de papel', 'Largo (mm)', 'Cantidad', 'Peso total (kg)', 'Merma total (kg)'];
+        return ['Tipo de papel', 'Largo (mm)', 'Cantidad', 'Peso total (kg)', 'Peso neto cortado (kg)', 'Merma total (kg)'];
     }
 
     public function title(): string

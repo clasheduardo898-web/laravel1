@@ -29,22 +29,40 @@ class InformeAnchoSheet implements FromCollection, WithHeadings, WithTitle
 
     public function collection(): Collection
     {
-        $rollos = $this->cortesFiltrados()->flatMap->numerosCorte->flatMap->rollosCortados;
+        $filas = collect();
 
-        return $rollos->groupBy('ancho_mm')
-            ->map(fn ($grupo, $ancho) => [
-                (float) $ancho,
-                $grupo->count(),
-                round($grupo->sum('peso_neto_lb'), 3),
-                round($grupo->sum('peso_kg'), 3),
-            ])
-            ->sortBy(fn ($fila) => $fila[0])
+        foreach ($this->cortesFiltrados() as $corte) {
+            foreach ($corte->numerosCorte as $nc) {
+                foreach ($nc->rollosCortados as $rc) {
+                    $filas->push([
+                        'tipo_papel' => $corte->tipo_papel,
+                        'ancho_mm' => (float) $rc->ancho_mm,
+                        'peso_neto_lb' => $rc->peso_neto_lb,
+                        'peso_kg' => $rc->peso_kg,
+                    ]);
+                }
+            }
+        }
+
+        return $filas
+            ->groupBy(fn ($f) => $f['tipo_papel'] . '|' . $f['ancho_mm'])
+            ->map(function ($grupo) {
+                $primero = $grupo->first();
+                return [
+                    $primero['tipo_papel'],
+                    $primero['ancho_mm'],
+                    $grupo->count(),
+                    round($grupo->sum('peso_neto_lb'), 3),
+                    round($grupo->sum('peso_kg'), 3),
+                ];
+            })
+            ->sortBy(fn ($f) => $f[0] . '|' . str_pad($f[1], 10, '0', STR_PAD_LEFT))
             ->values();
     }
 
     public function headings(): array
     {
-        return ['Ancho (mm)', 'Cantidad', 'Neto (lb)', 'Neto (kg)'];
+        return ['Tipo de papel', 'Ancho (mm)', 'Cantidad', 'Neto (lb)', 'Neto (kg)'];
     }
 
     public function title(): string
